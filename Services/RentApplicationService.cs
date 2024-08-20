@@ -1,39 +1,53 @@
-using MongoDB.Driver;
-using RentApplication.Configurations;
 using RentApplication.Models;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
-namespace RentApplication.Services;
-
-public class RentApplicationService
+namespace RentApplication.Services
 {
-    private readonly IMongoCollection<User> _usersCollection;
-
-    public RentApplicationService(IOptions<DatabaseSettings> databaseSettings)
+    public class RentApplicationService
     {
-        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
-        var mongoDatabase = mongoClient.GetDatabase(databaseSettings.Value.DatabaseName);
-        _usersCollection = mongoDatabase.GetCollection<User>(databaseSettings.Value.CollectionName);
+        private readonly RentApplicationDbContext _dbContext;
+
+        public RentApplicationService(RentApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        // Create
+        public async Task CreateUserAsync(User user)
+        {
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        // Read
+        public async Task<List<User>> GetUsersAsync() =>
+            await _dbContext.Users.ToListAsync();
+
+        public async Task<User?> GetUserAsync(string id) =>
+            await _dbContext.Users.FindAsync(id);
+
+        // Update
+public async Task UpdateUserAsync(string id, User updatedUser)
+{
+    var user = await _dbContext.Users.FindAsync(id);
+    if (user == null) return;
+
+    user.Name = updatedUser.Name;
+    user.Email = updatedUser.Email;
+    user.PhoneNumber = updatedUser.PhoneNumber;
+
+    await _dbContext.SaveChangesAsync();
+}
+
+
+        // Delete
+        public async Task DeleteUserAsync(string id)
+        {
+            var user = await _dbContext.Users.FindAsync(id);
+            if (user == null) return;
+
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
+        }
     }
-
-    // Create
-    public async Task CreateUserAsync(User user)
-    {
-        await _usersCollection.InsertOneAsync(user);
-    }
-
-    // Read
-    public async Task<List<User>> GetUsersAsync() =>
-        await _usersCollection.Find(_ => true).ToListAsync();
-
-    public async Task<User?> GetUserAsync(string id) =>
-        await _usersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-    // Update
-    public async Task UpdateUserAsync(string id, User updatedUser) =>
-        await _usersCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
-
-    // Delete
-    public async Task DeleteUserAsync(string id) =>
-        await _usersCollection.DeleteOneAsync(x => x.Id == id);
 }
