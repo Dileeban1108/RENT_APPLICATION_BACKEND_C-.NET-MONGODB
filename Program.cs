@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RentApplication.Configurations;
 using RentApplication.Models;
 using RentApplication.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +21,37 @@ builder.Services.AddDbContext<RentApplicationDbContext>(options =>
     ));
 
 // Register the RentApplicationService to the DI container
-builder.Services.AddScoped<RentApplicationService>();
+builder.Services.AddScoped<UserService>();
+
+// Register the UserService to the DI container
+builder.Services.AddScoped<UserService>();
+
+// Configure JWT authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
 
 // Add controllers and services to the container
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,10 +69,13 @@ if (app.Environment.IsDevelopment())
 // Uncomment if using HTTPS redirection
 // app.UseHttpsRedirection();
 
+// Use authentication and authorization
+app.UseAuthentication(); // Add this line to enable JWT authentication
+app.UseAuthorization();
+
 // Use routing and map the controllers
 app.UseRouting();
-
-app.UseAuthorization();
+app.UseCors("AllowAll");
 
 // Map controller routes
 app.MapControllers();

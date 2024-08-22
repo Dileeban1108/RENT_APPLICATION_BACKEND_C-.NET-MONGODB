@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DILEEBAN\\Desktop\\RentApplication\\RentApplication.csproj": {}
+    "C:\\Users\\DILEEBAN\\Desktop\\AllProjectFiles\\RentApplication\\RentApplication.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DILEEBAN\\Desktop\\RentApplication\\RentApplication.csproj": {
+    "C:\\Users\\DILEEBAN\\Desktop\\AllProjectFiles\\RentApplication\\RentApplication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DILEEBAN\\Desktop\\RentApplication\\RentApplication.csproj",
+        "projectUniqueName": "C:\\Users\\DILEEBAN\\Desktop\\AllProjectFiles\\RentApplication\\RentApplication.csproj",
         "projectName": "RentApplication",
-        "projectPath": "C:\\Users\\DILEEBAN\\Desktop\\RentApplication\\RentApplication.csproj",
+        "projectPath": "C:\\Users\\DILEEBAN\\Desktop\\AllProjectFiles\\RentApplication\\RentApplication.csproj",
         "packagesPath": "C:\\Users\\DILEEBAN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DILEEBAN\\Desktop\\RentApplication\\obj\\",
+        "outputPath": "C:\\Users\\DILEEBAN\\Desktop\\AllProjectFiles\\RentApplication\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\DILEEBAN\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -46,6 +46,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.8, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[8.0.7, )"
@@ -55,6 +63,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.8, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
