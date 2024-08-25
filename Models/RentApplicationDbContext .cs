@@ -10,5 +10,7 @@ namespace RentApplication.Models
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<BookedVehicles> VehicleBookings { get; set; }
+
     }
 }

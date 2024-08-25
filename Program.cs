@@ -23,9 +23,6 @@ builder.Services.AddDbContext<RentApplicationDbContext>(options =>
 // Register the RentApplicationService to the DI container
 builder.Services.AddScoped<UserService>();
 
-// Register the UserService to the DI container
-builder.Services.AddScoped<UserService>();
-
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -40,6 +37,26 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])),
         ValidateIssuer = false,
         ValidateAudience = false
+    };
+
+    // Add detailed logging for JWT authentication events
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("Token validated successfully.");
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            Console.WriteLine("Token was not valid or missing.");
+            return Task.CompletedTask;
+        }
     };
 });
 
